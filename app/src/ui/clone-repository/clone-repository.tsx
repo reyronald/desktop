@@ -61,6 +61,9 @@ interface ICloneRepositoryState {
    * The repository identifier that was last parsed from the user-entered URL.
    */
   readonly lastParsedIdentifier: IRepositoryIdentifier | null
+
+  /** The filter texts used in each tab  */
+  readonly filters: { [key: number]: string }
 }
 
 /** The component for cloning a repository. */
@@ -77,6 +80,7 @@ export class CloneRepository extends React.Component<
       loading: false,
       error: null,
       lastParsedIdentifier: null,
+      filters: {},
     }
   }
 
@@ -176,6 +180,8 @@ export class CloneRepository extends React.Component<
               onGitHubRepositorySelected={this.updateUrl}
               onChooseDirectory={this.onChooseDirectory}
               onDismissed={this.props.onDismissed}
+              onFilterTextChanged={this.onFilterChanged}
+              filterText={this.state.filters[tab] || ''}
             />
           )
         }
@@ -224,6 +230,12 @@ export class CloneRepository extends React.Component<
       default:
         return assertNever(tab, `Unknown sign in tab: ${tab}`)
     }
+  }
+
+  private onFilterChanged = (filterText: string) => {
+    this.setState(prevState => ({
+      filters: { ...prevState.filters, [this.props.selectedTab]: filterText },
+    }))
   }
 
   private signInDotCom = () => {

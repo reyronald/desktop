@@ -36,6 +36,12 @@ interface ICloneGithubRepositoryProps {
 
   /** Called when a repository is selected. */
   readonly onGitHubRepositorySelected: (url: string) => void
+
+  /** Called when the filter text of the repository list is changed by the user. */
+  readonly onFilterTextChanged: (filterText: string) => void
+
+  /** An iniital filter text to use */
+  readonly filterText: string
 }
 
 interface ICloneGithubRepositoryState {
@@ -114,6 +120,10 @@ export class CloneGithubRepository extends React.Component<
   }
 
   public componentWillReceiveProps(nextProps: ICloneGithubRepositoryProps) {
+    this.setState({
+      filterText: nextProps.filterText,
+    })
+
     if (nextProps.account.id !== this.props.account.id) {
       this.loadRepositories(nextProps.account)
     }
@@ -165,6 +175,7 @@ export class CloneGithubRepository extends React.Component<
 
   private onFilterTextChanged = (filterText: string) => {
     this.setState({ filterText })
+    this.props.onFilterTextChanged(filterText)
   }
 
   private onFilterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
